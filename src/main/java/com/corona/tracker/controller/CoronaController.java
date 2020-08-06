@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,14 +15,15 @@ import com.corona.tracker.model.Corona;
 
 @Controller
 public class CoronaController {
+	@Autowired
+	private RestTemplate restTemplate;
+	private final String uri = "https://corona-virus-stats.herokuapp.com/api/v1/cases/countries-search?limit=200";
+
 	@RequestMapping(value = "/corona")
 	public String getStatus(Model model) {
-		final String uri = "https://corona-virus-stats.herokuapp.com/api/v1/cases/countries-search?limit=200";
-
-		RestTemplate restTemplate = new RestTemplate();
 		String result = restTemplate.getForObject(uri, String.class);
 		JSONObject object = new JSONObject(result);
-		String date=object.getJSONObject("data").getString("last_update");
+		String date = object.getJSONObject("data").getString("last_update");
 		JSONArray rows = object.getJSONObject("data").getJSONArray("rows");
 		List<Corona> coronaList = new ArrayList<Corona>();
 		for (int i = 1; i < rows.length(); i++) {
@@ -35,7 +37,6 @@ public class CoronaController {
 			corona.setTotalRecovered(row.getString("total_recovered"));
 			corona.setActiveCases(row.getString("active_cases"));
 			coronaList.add(corona);
-
 		}
 		model.addAttribute("coronaList", coronaList);
 		model.addAttribute("date", date);
