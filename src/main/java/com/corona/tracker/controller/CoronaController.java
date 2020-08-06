@@ -24,7 +24,7 @@ public class CoronaController {
 		String date=object.getJSONObject("data").getString("last_update");
 		JSONArray rows = object.getJSONObject("data").getJSONArray("rows");
 		List<Corona> coronaList = new ArrayList<Corona>();
-		for (int i = 0; i < rows.length(); i++) {
+		for (int i = 1; i < rows.length(); i++) {
 			JSONObject row = rows.getJSONObject(i);
 			Corona corona = new Corona();
 			corona.setCountry(row.getString("country"));
